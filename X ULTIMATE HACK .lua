@@ -1,7 +1,7 @@
--- [[ X ULTIMATE HACK V3.9.5 ]] --
--- STATUS: CRITICAL FIX.
--- FIXED: Hitbox Expander & Silent Aim logic was missing in V3.9.4.
--- RESTORED: All combat physics loops.
+-- [[ X ULTIMATE HACK V3.9.6 ]] --
+-- STATUS: COMPLETE.
+-- RESTORED: "Save Point" & "Warp Point" (P1/P2/P3) in Movement Tab.
+-- RETAINED: All fixes (Hitbox, Fly, Menu, Drag).
 
 local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
@@ -50,6 +50,7 @@ local Vals = {
     FOV = 200, WalkSpeed = 100, FlySpeed = 60, HitboxSize = 15, SilentHeadSize = 25
 }
 
+local Checkpoints = {P1 = nil, P2 = nil, P3 = nil}
 local ESPObjects = {}
 local tracerLines = {}
 local ToggleFuncs = {}
@@ -130,6 +131,18 @@ local function ResetCollision()
     end
 end
 
+-- [RESTORED] TP Point Functions
+local function SetPoint(n) 
+    if LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then 
+        Checkpoints[n] = LocalPlayer.Character.HumanoidRootPart.CFrame 
+    end 
+end
+local function TPPoint(n) 
+    if Checkpoints[n] and LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then 
+        LocalPlayer.Character.HumanoidRootPart.CFrame = Checkpoints[n] 
+    end 
+end
+
 local function toggleXRay(state)
     for _, v in pairs(workspace:GetDescendants()) do
         if v:IsA("BasePart") and not v.Parent:FindFirstChild("Humanoid") then
@@ -184,8 +197,8 @@ for _, p in pairs(Players:GetPlayers()) do createESP(p) end
 Players.PlayerAdded:Connect(createESP)
 Players.PlayerRemoving:Connect(removeESP)
 
--- [[ 5. UI SYSTEM (V3.9.5) ]] --
-local guiName = "X_ULTIMATE_V3_9_5"
+-- [[ 5. UI SYSTEM (V3.9.6) ]] --
+local guiName = "X_ULTIMATE_V3_9_6"
 if targetGui:FindFirstChild(guiName) then targetGui[guiName]:Destroy() end
 local ScreenGui = Instance.new("ScreenGui", targetGui); ScreenGui.Name = guiName; ScreenGui.ResetOnSpawn = false; ScreenGui.DisplayOrder = 999
 
@@ -195,7 +208,7 @@ Main.Size = UDim2.new(0, 600, 0, 420); Main.Position = UDim2.new(0.5, -300, 0.5,
 -- Side Panel
 local SidePanel = Instance.new("Frame", Main); SidePanel.Size = UDim2.new(0, 150, 1, 0); SidePanel.BackgroundColor3 = Theme.Sec; Instance.new("UICorner", SidePanel).CornerRadius = UDim.new(0, 8)
 local Title = Instance.new("TextLabel", SidePanel); Title.Text = "X ULTIMATE"; Title.Size = UDim2.new(1, 0, 0, 50); Title.BackgroundTransparency = 1; Title.TextColor3 = Theme.Stroke; Title.Font = Enum.Font.GothamBlack; Title.TextSize = 20
-local Ver = Instance.new("TextLabel", SidePanel); Ver.Text = "V3.9.5"; Ver.Size = UDim2.new(1, 0, 0, 20); Ver.Position = UDim2.new(0, 0, 0, 35); Ver.BackgroundTransparency = 1; Ver.TextColor3 = Theme.TextDim; Ver.TextSize = 11; Ver.Font = Enum.Font.GothamBold
+local Ver = Instance.new("TextLabel", SidePanel); Ver.Text = "V3.9.6"; Ver.Size = UDim2.new(1, 0, 0, 20); Ver.Position = UDim2.new(0, 0, 0, 35); Ver.BackgroundTransparency = 1; Ver.TextColor3 = Theme.TextDim; Ver.TextSize = 11; Ver.Font = Enum.Font.GothamBold
 
 MakeDraggable(SidePanel, Main) 
 
@@ -252,6 +265,15 @@ local function AddSlider(page, text, min, max, def, cb)
     local Fill = Instance.new("Frame", SlideBar); Fill.Size = UDim2.new((def-min)/(max-min), 0, 1, 0); Fill.BackgroundColor3 = Theme.Stroke; Instance.new("UICorner", Fill).CornerRadius = UDim.new(1, 0)
     local drag = false; SlideBar.MouseButton1Down:Connect(function() drag = true end); UIS.InputEnded:Connect(function(i) if i.UserInputType == Enum.UserInputType.MouseButton1 then drag = false end end)
     UIS.InputChanged:Connect(function(i) if drag and i.UserInputType == Enum.UserInputType.MouseMovement then local p = math.clamp((i.Position.X - SlideBar.AbsolutePosition.X) / SlideBar.AbsoluteSize.X, 0, 1); Fill.Size = UDim2.new(p, 0, 1, 0); local v = math.floor(min + (max - min) * p); Label.Text = text .. ": " .. v; cb(v) end end)
+end
+
+-- [RESTORED] AddDual Function for TP Points
+local function AddDual(page, t1, cb1, t2, cb2)
+    local F = Instance.new("Frame", page); F.Size = UDim2.new(1, -5, 0, 40); F.BackgroundTransparency = 1
+    local B1 = Instance.new("TextButton", F); B1.Size = UDim2.new(0.48, 0, 1, 0); B1.BackgroundColor3 = Theme.Sec; B1.Text = t1; B1.TextColor3 = Theme.Text; B1.Font = Enum.Font.GothamBold; B1.TextSize = 11; B1.AutoButtonColor = false; Instance.new("UICorner", B1).CornerRadius = UDim.new(0, 6); local S1 = Instance.new("UIStroke", B1); S1.Color = Theme.Stroke; S1.Transparency = 0.9
+    B1.MouseButton1Click:Connect(function() TweenService:Create(B1, TweenInfo.new(0.1), {BackgroundColor3 = Theme.Stroke, TextColor3 = Theme.Main}):Play(); task.wait(0.1); TweenService:Create(B1, TweenInfo.new(0.2), {BackgroundColor3 = Theme.Sec, TextColor3 = Theme.Text}):Play(); cb1() end)
+    local B2 = Instance.new("TextButton", F); B2.Size = UDim2.new(0.48, 0, 1, 0); B2.Position = UDim2.new(0.52, 0, 0, 0); B2.BackgroundColor3 = Theme.Sec; B2.Text = t2; B2.TextColor3 = Theme.Text; B2.Font = Enum.Font.GothamBold; B2.TextSize = 11; B2.AutoButtonColor = false; Instance.new("UICorner", B2).CornerRadius = UDim.new(0, 6); local S2 = Instance.new("UIStroke", B2); S2.Color = Theme.Stroke; S2.Transparency = 0.9
+    B2.MouseButton1Click:Connect(function() TweenService:Create(B2, TweenInfo.new(0.1), {BackgroundColor3 = Theme.Stroke, TextColor3 = Theme.Main}):Play(); task.wait(0.1); TweenService:Create(B2, TweenInfo.new(0.2), {BackgroundColor3 = Theme.Sec, TextColor3 = Theme.Text}):Play(); cb2() end)
 end
 
 -- [[ FIXED PLAYER MENU ]] --
@@ -338,32 +360,32 @@ AddToggle(P3, "Noclip [V]", "Noclip")
 AddToggle(P3, "Speed Hack", "SpeedHack")
 AddSlider(P3, "Walk Speed", 16, 300, 100, function(v) Vals.WalkSpeed = v end)
 AddToggle(P3, "Infinite Jump", "InfJump")
+-- [RESTORED] Buttons
+AddDual(P3, "SAVE P1", function() SetPoint("P1") end, "WARP P1", function() TPPoint("P1") end)
+AddDual(P3, "SAVE P2", function() SetPoint("P2") end, "WARP P2", function() TPPoint("P2") end)
+AddDual(P3, "SAVE P3", function() SetPoint("P3") end, "WARP P3", function() TPPoint("P3") end)
 
 AddPlayerList(P4)
 
--- [[ 6. PHYSICS & LOGIC LOOP (RESTORED + HITBOX FIX) ]] --
+-- [[ 6. PHYSICS & LOGIC LOOP ]] --
 RunService.Stepped:Connect(function()
     local hum = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("Humanoid")
     local hrp = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
     
-    -- NoFall
     if States.NoFall and hrp and hum then
         if hrp.AssemblyLinearVelocity.Y < -30 then hrp.AssemblyLinearVelocity = Vector3.new(hrp.AssemblyLinearVelocity.X, -30, hrp.AssemblyLinearVelocity.Z) end
         hum.FallDistance = 0
     end
-    -- Noclip
     if States.Noclip and hrp then
         for _, v in pairs(LocalPlayer.Character:GetDescendants()) do if v:IsA("BasePart") and v.CanCollide then v.CanCollide = false end end
     end
 end)
 
--- Heartbeat: Physics Moves + HITBOX LOGIC
 RunService.Heartbeat:Connect(function()
     local hum = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("Humanoid")
     local hrp = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
     if not hrp or not hum then return end
 
-    -- Fly
     if States.Fly then
         hum.PlatformStand = true
         local dir = Vector3.zero
@@ -379,12 +401,10 @@ RunService.Heartbeat:Connect(function()
         if hum.PlatformStand then hum.PlatformStand = false end
     end
 
-    -- Speed Hack
     if States.SpeedHack then
         hum.WalkSpeed = Vals.WalkSpeed
     end
 
-    -- [[ HITBOX EXPANDER & SILENT AIM LOGIC (FIXED) ]] --
     if States.Hitbox or States.SilentAim then
         for _, p in pairs(Players:GetPlayers()) do
             if p ~= LocalPlayer and p.Character then
@@ -394,37 +414,26 @@ RunService.Heartbeat:Connect(function()
                 local eHead = p.Character:FindFirstChild("Head")
                 
                 if eHum and eRoot and eHead then
-                    -- Silent Aim (Giant Head)
                     if States.SilentAim then
                         eHead.Size = Vector3.new(Vals.SilentHeadSize, Vals.SilentHeadSize, Vals.SilentHeadSize)
-                        eHead.Transparency = 0.7
-                        eHead.CanCollide = false
-                        eHead.Massless = true
+                        eHead.Transparency = 0.7; eHead.CanCollide = false; eHead.Massless = true
                     else
                         if not eHum.Sit then 
-                            eHead.Size = Vector3.new(1.2, 1, 1)
-                            eHead.Transparency = 0 
-                            eHead.CanCollide = true
+                            eHead.Size = Vector3.new(1.2, 1, 1); eHead.Transparency = 0; eHead.CanCollide = true
                         end
                     end
-
-                    -- Hitbox Expander (Giant Root)
                     if States.Hitbox then
                         if not eHum.Sit then
                             eRoot.Size = Vector3.new(Vals.HitboxSize, Vals.HitboxSize, Vals.HitboxSize)
-                            eRoot.Transparency = 0.7
-                            eRoot.CanCollide = false
+                            eRoot.Transparency = 0.7; eRoot.CanCollide = false
                         end
                     else
-                        eRoot.Size = Vector3.new(2, 2, 1)
-                        eRoot.Transparency = 1
-                        eRoot.CanCollide = true
+                        eRoot.Size = Vector3.new(2, 2, 1); eRoot.Transparency = 1; eRoot.CanCollide = true
                     end
                 end
             end
         end
     else
-        -- Reset sizes when disabled
         for _, p in pairs(Players:GetPlayers()) do
             if p ~= LocalPlayer and p.Character then
                 local eRoot = p.Character:FindFirstChild("HumanoidRootPart")
@@ -436,7 +445,6 @@ RunService.Heartbeat:Connect(function()
     end
 end)
 
--- RenderStepped: Visuals
 RunService.RenderStepped:Connect(function()
     if fovRing then fovRing.Visible=States.ShowFOV; fovRing.Radius=Vals.FOV; fovRing.Position=Vector2.new(Camera.ViewportSize.X/2, Camera.ViewportSize.Y/2) end
     if States.Aimbot then
@@ -446,20 +454,15 @@ RunService.RenderStepped:Connect(function()
     if States.TriggerBot then local t = Mouse.Target; if t and t.Parent and t.Parent:FindFirstChild("Humanoid") and t.Parent.Name ~= LocalPlayer.Name then mouse1click() end end
     if States.Chams then UpdateChams() end
     
-    -- ESP Logic
     for plr, esp in pairs(ESPObjects) do
         local char = plr.Character
         local root = char and char:FindFirstChild("HumanoidRootPart")
         local hum = char and char:FindFirstChild("Humanoid")
         local valid = char and root and hum and hum.Health > 0 and char:FindFirstChild("Head")
-        
         local onScreen = false
         local vector = Vector3.zero
         
-        if valid then
-            vector, onScreen = Camera:WorldToViewportPoint(root.Position)
-        end
-        
+        if valid then vector, onScreen = Camera:WorldToViewportPoint(root.Position) end
         local drawColor = Theme.Stroke
         if valid and States.TeamCheck and IsTeammate(plr) then drawColor = Theme.Team end
 
@@ -469,14 +472,10 @@ RunService.RenderStepped:Connect(function()
             local width = height / 1.8
             
             if States.ESP then
-                esp.Box.Visible = true
-                esp.Box.Size = Vector2.new(width, height)
-                esp.Box.Position = Vector2.new(vector.X - width/2, vector.Y - height/2)
-                esp.Box.Color = drawColor
-                esp.Name.Visible = true
-                esp.Name.Text = plr.Name
-                esp.Name.Position = Vector2.new(vector.X, esp.Box.Position.Y - 18)
-                esp.Name.Color = drawColor
+                esp.Box.Visible = true; esp.Box.Size = Vector2.new(width, height)
+                esp.Box.Position = Vector2.new(vector.X - width/2, vector.Y - height/2); esp.Box.Color = drawColor
+                esp.Name.Visible = true; esp.Name.Text = plr.Name
+                esp.Name.Position = Vector2.new(vector.X, esp.Box.Position.Y - 18); esp.Name.Color = drawColor
                 esp.HealthBar.Visible = true
                 esp.HealthBar.From = Vector2.new(esp.Box.Position.X - 5, esp.Box.Position.Y + height)
                 esp.HealthBar.To = Vector2.new(esp.Box.Position.X - 5, esp.Box.Position.Y + height - height*(hum.Health/hum.MaxHealth))
@@ -485,11 +484,9 @@ RunService.RenderStepped:Connect(function()
             end
             
             if States.Tracers then
-                local l = tracerLines[plr] or Drawing.new("Line")
-                tracerLines[plr] = l
+                local l = tracerLines[plr] or Drawing.new("Line"); tracerLines[plr] = l
                 l.Visible = true; l.Thickness = 1.5; l.Color = drawColor
-                l.From = Vector2.new(Camera.ViewportSize.X/2, Camera.ViewportSize.Y)
-                l.To = Vector2.new(vector.X, vector.Y)
+                l.From = Vector2.new(Camera.ViewportSize.X/2, Camera.ViewportSize.Y); l.To = Vector2.new(vector.X, vector.Y)
             else
                 if tracerLines[plr] then tracerLines[plr].Visible = false end
             end
@@ -515,4 +512,4 @@ UIS.InputBegan:Connect(function(i,g)
     end
 end)
 
-print("X ULTIMATE V3.9.5 BUG FREE LOADED")
+print("X ULTIMATE V3.9.6 COMPLETE LOADED")
