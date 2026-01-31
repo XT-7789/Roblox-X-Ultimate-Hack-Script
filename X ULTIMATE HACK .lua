@@ -1,7 +1,8 @@
--- [[ X ULTIMATE HACK V3.9.6 ]] --
--- STATUS: COMPLETE.
--- RESTORED: "Save Point" & "Warp Point" (P1/P2/P3) in Movement Tab.
--- RETAINED: All fixes (Hitbox, Fly, Menu, Drag).
+-- [[ X ULTIMATE HACK V3.9.10 ]] --
+-- STATUS: CRYSTAL CLEAR TEXT.
+-- FIX: Increased "SPECTATE" & "STOP" button text size (13 -> 16).
+-- FIX: Sharpened fonts for better readability on all screens.
+-- RETAINED: Team/Base Sort, Hitbox, Fly, Menu, Drag.
 
 local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
@@ -31,7 +32,7 @@ local Theme = {
     Stroke = Color3.fromRGB(0, 255, 255),    -- Cyan
     Team = Color3.fromRGB(0, 255, 100),      -- Green
     Text = Color3.fromRGB(255, 255, 255),
-    TextDim = Color3.fromRGB(150, 150, 150),
+    TextDim = Color3.fromRGB(200, 200, 200), -- Brighter
     Selected = Color3.fromRGB(255, 200, 0),
     Danger = Color3.fromRGB(255, 50, 50)
 }
@@ -131,7 +132,7 @@ local function ResetCollision()
     end
 end
 
--- [RESTORED] TP Point Functions
+-- TP Point Functions
 local function SetPoint(n) 
     if LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then 
         Checkpoints[n] = LocalPlayer.Character.HumanoidRootPart.CFrame 
@@ -197,8 +198,8 @@ for _, p in pairs(Players:GetPlayers()) do createESP(p) end
 Players.PlayerAdded:Connect(createESP)
 Players.PlayerRemoving:Connect(removeESP)
 
--- [[ 5. UI SYSTEM (V3.9.6) ]] --
-local guiName = "X_ULTIMATE_V3_9_6"
+-- [[ 5. UI SYSTEM (V3.9.10 HD) ]] --
+local guiName = "X_ULTIMATE_V3_9_10"
 if targetGui:FindFirstChild(guiName) then targetGui[guiName]:Destroy() end
 local ScreenGui = Instance.new("ScreenGui", targetGui); ScreenGui.Name = guiName; ScreenGui.ResetOnSpawn = false; ScreenGui.DisplayOrder = 999
 
@@ -207,8 +208,10 @@ Main.Size = UDim2.new(0, 600, 0, 420); Main.Position = UDim2.new(0.5, -300, 0.5,
 
 -- Side Panel
 local SidePanel = Instance.new("Frame", Main); SidePanel.Size = UDim2.new(0, 150, 1, 0); SidePanel.BackgroundColor3 = Theme.Sec; Instance.new("UICorner", SidePanel).CornerRadius = UDim.new(0, 8)
-local Title = Instance.new("TextLabel", SidePanel); Title.Text = "X ULTIMATE"; Title.Size = UDim2.new(1, 0, 0, 50); Title.BackgroundTransparency = 1; Title.TextColor3 = Theme.Stroke; Title.Font = Enum.Font.GothamBlack; Title.TextSize = 20
-local Ver = Instance.new("TextLabel", SidePanel); Ver.Text = "V3.9.6"; Ver.Size = UDim2.new(1, 0, 0, 20); Ver.Position = UDim2.new(0, 0, 0, 35); Ver.BackgroundTransparency = 1; Ver.TextColor3 = Theme.TextDim; Ver.TextSize = 11; Ver.Font = Enum.Font.GothamBold
+-- [HD] Title
+local Title = Instance.new("TextLabel", SidePanel); Title.Text = "X ULTIMATE"; Title.Size = UDim2.new(1, 0, 0, 50); Title.BackgroundTransparency = 1; Title.TextColor3 = Theme.Stroke; Title.Font = Enum.Font.GothamBlack; Title.TextSize = 22
+-- [HD] Version
+local Ver = Instance.new("TextLabel", SidePanel); Ver.Text = "V3.9.10 HD"; Ver.Size = UDim2.new(1, 0, 0, 20); Ver.Position = UDim2.new(0, 0, 0, 35); Ver.BackgroundTransparency = 1; Ver.TextColor3 = Theme.TextDim; Ver.TextSize = 13; Ver.Font = Enum.Font.GothamBold
 
 MakeDraggable(SidePanel, Main) 
 
@@ -232,7 +235,8 @@ local function CreatePage(name, isScrolling)
     
     local List = Instance.new("UIListLayout", Page); List.Padding = UDim.new(0, 8)
     
-    local TabBtn = Instance.new("TextButton", TabHolder); TabBtn.Size = UDim2.new(1, 0, 0, 35); TabBtn.BackgroundColor3 = Color3.fromRGB(30,30,35); TabBtn.Text = name; TabBtn.TextColor3 = Theme.TextDim; TabBtn.Font = Enum.Font.GothamBold; TabBtn.TextSize = 12; TabBtn.AutoButtonColor = false; Instance.new("UICorner", TabBtn).CornerRadius = UDim.new(0, 6)
+    -- [HD] Tabs
+    local TabBtn = Instance.new("TextButton", TabHolder); TabBtn.Size = UDim2.new(1, 0, 0, 35); TabBtn.BackgroundColor3 = Color3.fromRGB(30,30,35); TabBtn.Text = name; TabBtn.TextColor3 = Theme.TextDim; TabBtn.Font = Enum.Font.GothamSemibold; TabBtn.TextSize = 14; TabBtn.AutoButtonColor = false; Instance.new("UICorner", TabBtn).CornerRadius = UDim.new(0, 6)
     TabBtn.MouseButton1Click:Connect(function() 
         for _,v in pairs(PageHolder:GetChildren()) do v.Visible=false end
         for _,v in pairs(TabHolder:GetChildren()) do if v:IsA("TextButton") then TweenService:Create(v, TweenInfo.new(0.2), {BackgroundColor3=Color3.fromRGB(30,30,35), TextColor3=Theme.TextDim}):Play() end end
@@ -245,7 +249,8 @@ end
 local function AddToggle(page, text, flag)
     local Btn = Instance.new("TextButton", page); Btn.Size = UDim2.new(1, -5, 0, 45); Btn.BackgroundColor3 = Theme.Sec; Btn.Text = ""; Btn.AutoButtonColor = false; Instance.new("UICorner", Btn).CornerRadius = UDim.new(0, 6)
     local Stroke = Instance.new("UIStroke", Btn); Stroke.Color = Theme.Stroke; Stroke.Transparency = 0.8
-    local Label = Instance.new("TextLabel", Btn); Label.Text = text; Label.Size = UDim2.new(0.7, 0, 1, 0); Label.Position = UDim2.new(0, 15, 0, 0); Label.BackgroundTransparency = 1; Label.TextColor3 = Theme.Text; Label.Font = Enum.Font.GothamSemibold; Label.TextSize = 14; Label.TextXAlignment = Enum.TextXAlignment.Left
+    -- [HD] Labels
+    local Label = Instance.new("TextLabel", Btn); Label.Text = text; Label.Size = UDim2.new(0.7, 0, 1, 0); Label.Position = UDim2.new(0, 15, 0, 0); Label.BackgroundTransparency = 1; Label.TextColor3 = Theme.Text; Label.Font = Enum.Font.GothamSemibold; Label.TextSize = 15; Label.TextXAlignment = Enum.TextXAlignment.Left
     local Indicator = Instance.new("Frame", Btn); Indicator.Size = UDim2.new(0, 40, 0, 6); Indicator.Position = UDim2.new(1, -55, 0.5, -3); Indicator.BackgroundColor3 = Color3.fromRGB(40,40,45); Instance.new("UICorner", Indicator).CornerRadius = UDim.new(1, 0)
     local Dot = Instance.new("Frame", Indicator); Dot.Size = UDim2.new(0, 14, 0, 14); Dot.Position = UDim2.new(0, -4, 0.5, -7); Dot.BackgroundColor3 = Color3.fromRGB(80,80,80); Instance.new("UICorner", Dot).CornerRadius = UDim.new(1, 0)
     local function Update(val)
@@ -260,27 +265,28 @@ end
 
 local function AddSlider(page, text, min, max, def, cb)
     local Frame = Instance.new("Frame", page); Frame.Size = UDim2.new(1, -5, 0, 55); Frame.BackgroundColor3 = Theme.Sec; Instance.new("UICorner", Frame).CornerRadius = UDim.new(0, 6)
-    local Label = Instance.new("TextLabel", Frame); Label.Text = text .. ": " .. def; Label.Size = UDim2.new(1, -20, 0, 20); Label.Position = UDim2.new(0, 10, 0, 5); Label.BackgroundTransparency = 1; Label.TextColor3 = Theme.Text; Label.Font = Enum.Font.GothamBold; Label.TextSize = 12; Label.TextXAlignment = Enum.TextXAlignment.Left
+    local Label = Instance.new("TextLabel", Frame); Label.Text = text .. ": " .. def; Label.Size = UDim2.new(1, -20, 0, 20); Label.Position = UDim2.new(0, 10, 0, 5); Label.BackgroundTransparency = 1; Label.TextColor3 = Theme.Text; Label.Font = Enum.Font.GothamSemibold; Label.TextSize = 14; Label.TextXAlignment = Enum.TextXAlignment.Left
     local SlideBar = Instance.new("TextButton", Frame); SlideBar.Size = UDim2.new(1, -20, 0, 6); SlideBar.Position = UDim2.new(0, 10, 0, 35); SlideBar.BackgroundColor3 = Color3.fromRGB(40,40,45); SlideBar.Text = ""; SlideBar.AutoButtonColor = false; Instance.new("UICorner", SlideBar).CornerRadius = UDim.new(1, 0)
     local Fill = Instance.new("Frame", SlideBar); Fill.Size = UDim2.new((def-min)/(max-min), 0, 1, 0); Fill.BackgroundColor3 = Theme.Stroke; Instance.new("UICorner", Fill).CornerRadius = UDim.new(1, 0)
     local drag = false; SlideBar.MouseButton1Down:Connect(function() drag = true end); UIS.InputEnded:Connect(function(i) if i.UserInputType == Enum.UserInputType.MouseButton1 then drag = false end end)
     UIS.InputChanged:Connect(function(i) if drag and i.UserInputType == Enum.UserInputType.MouseMovement then local p = math.clamp((i.Position.X - SlideBar.AbsolutePosition.X) / SlideBar.AbsoluteSize.X, 0, 1); Fill.Size = UDim2.new(p, 0, 1, 0); local v = math.floor(min + (max - min) * p); Label.Text = text .. ": " .. v; cb(v) end end)
 end
 
--- [RESTORED] AddDual Function for TP Points
 local function AddDual(page, t1, cb1, t2, cb2)
     local F = Instance.new("Frame", page); F.Size = UDim2.new(1, -5, 0, 40); F.BackgroundTransparency = 1
-    local B1 = Instance.new("TextButton", F); B1.Size = UDim2.new(0.48, 0, 1, 0); B1.BackgroundColor3 = Theme.Sec; B1.Text = t1; B1.TextColor3 = Theme.Text; B1.Font = Enum.Font.GothamBold; B1.TextSize = 11; B1.AutoButtonColor = false; Instance.new("UICorner", B1).CornerRadius = UDim.new(0, 6); local S1 = Instance.new("UIStroke", B1); S1.Color = Theme.Stroke; S1.Transparency = 0.9
+    local B1 = Instance.new("TextButton", F); B1.Size = UDim2.new(0.48, 0, 1, 0); B1.BackgroundColor3 = Theme.Sec; B1.Text = t1; B1.TextColor3 = Theme.Text; B1.Font = Enum.Font.GothamBold; B1.TextSize = 13; B1.AutoButtonColor = false; Instance.new("UICorner", B1).CornerRadius = UDim.new(0, 6); local S1 = Instance.new("UIStroke", B1); S1.Color = Theme.Stroke; S1.Transparency = 0.9
     B1.MouseButton1Click:Connect(function() TweenService:Create(B1, TweenInfo.new(0.1), {BackgroundColor3 = Theme.Stroke, TextColor3 = Theme.Main}):Play(); task.wait(0.1); TweenService:Create(B1, TweenInfo.new(0.2), {BackgroundColor3 = Theme.Sec, TextColor3 = Theme.Text}):Play(); cb1() end)
-    local B2 = Instance.new("TextButton", F); B2.Size = UDim2.new(0.48, 0, 1, 0); B2.Position = UDim2.new(0.52, 0, 0, 0); B2.BackgroundColor3 = Theme.Sec; B2.Text = t2; B2.TextColor3 = Theme.Text; B2.Font = Enum.Font.GothamBold; B2.TextSize = 11; B2.AutoButtonColor = false; Instance.new("UICorner", B2).CornerRadius = UDim.new(0, 6); local S2 = Instance.new("UIStroke", B2); S2.Color = Theme.Stroke; S2.Transparency = 0.9
+    local B2 = Instance.new("TextButton", F); B2.Size = UDim2.new(0.48, 0, 1, 0); B2.Position = UDim2.new(0.52, 0, 0, 0); B2.BackgroundColor3 = Theme.Sec; B2.Text = t2; B2.TextColor3 = Theme.Text; B2.Font = Enum.Font.GothamBold; B2.TextSize = 13; B2.AutoButtonColor = false; Instance.new("UICorner", B2).CornerRadius = UDim.new(0, 6); local S2 = Instance.new("UIStroke", B2); S2.Color = Theme.Stroke; S2.Transparency = 0.9
     B2.MouseButton1Click:Connect(function() TweenService:Create(B2, TweenInfo.new(0.1), {BackgroundColor3 = Theme.Stroke, TextColor3 = Theme.Main}):Play(); task.wait(0.1); TweenService:Create(B2, TweenInfo.new(0.2), {BackgroundColor3 = Theme.Sec, TextColor3 = Theme.Text}):Play(); cb2() end)
 end
 
--- [[ FIXED PLAYER MENU ]] --
+-- [[ FIXED & SORTED PLAYER MENU (HD) ]] --
 local function AddPlayerList(page)
     local Header = Instance.new("Frame", page); Header.Size = UDim2.new(1, -5, 0, 40); Header.BackgroundColor3 = Theme.Sec; Instance.new("UICorner", Header).CornerRadius = UDim.new(0, 6)
-    local ModeBtn = Instance.new("TextButton", Header); ModeBtn.Size = UDim2.new(0.5, 0, 0.8, 0); ModeBtn.Position = UDim2.new(0.45, 0, 0.1, 0); ModeBtn.BackgroundColor3 = Theme.Main; ModeBtn.Text = "SPECTATE"; ModeBtn.TextColor3 = Theme.Stroke; ModeBtn.Font = Enum.Font.GothamBlack; ModeBtn.TextSize = 11; Instance.new("UICorner", ModeBtn).CornerRadius = UDim.new(0, 4)
-    local Label = Instance.new("TextLabel", Header); Label.Text = "CLICK MODE:"; Label.Size = UDim2.new(0.4, 0, 1, 0); Label.BackgroundTransparency = 1; Label.TextColor3 = Theme.Text; Label.Font = Enum.Font.GothamBold; Label.TextSize = 12
+    
+    -- [HD] SPECTATE/TELEPORT BUTTON (Big Text)
+    local ModeBtn = Instance.new("TextButton", Header); ModeBtn.Size = UDim2.new(0.5, 0, 0.8, 0); ModeBtn.Position = UDim2.new(0.45, 0, 0.1, 0); ModeBtn.BackgroundColor3 = Theme.Main; ModeBtn.Text = "SPECTATE"; ModeBtn.TextColor3 = Theme.Stroke; ModeBtn.Font = Enum.Font.GothamBold; ModeBtn.TextSize = 16; Instance.new("UICorner", ModeBtn).CornerRadius = UDim.new(0, 4)
+    local Label = Instance.new("TextLabel", Header); Label.Text = "CLICK MODE:"; Label.Size = UDim2.new(0.4, 0, 1, 0); Label.BackgroundTransparency = 1; Label.TextColor3 = Theme.Text; Label.Font = Enum.Font.GothamSemibold; Label.TextSize = 14
     local ModeStroke = Instance.new("UIStroke", ModeBtn); ModeStroke.Color = Theme.Stroke; ModeStroke.Thickness = 1
     
     ModeBtn.MouseButton1Click:Connect(function()
@@ -297,19 +303,35 @@ local function AddPlayerList(page)
         end
     end)
 
-    local StopBtn = Instance.new("TextButton", page); StopBtn.Size = UDim2.new(1, -5, 0, 30); StopBtn.BackgroundColor3 = Theme.Danger; StopBtn.Text = "STOP SPECTATING"; StopBtn.TextColor3 = Color3.new(1,1,1); StopBtn.Font = Enum.Font.GothamBold; StopBtn.TextSize = 11; Instance.new("UICorner", StopBtn).CornerRadius = UDim.new(0, 6)
+    -- [HD] STOP BUTTON (Big Text)
+    local StopBtn = Instance.new("TextButton", page); StopBtn.Size = UDim2.new(1, -5, 0, 35); StopBtn.BackgroundColor3 = Theme.Danger; StopBtn.Text = "STOP SPECTATING"; StopBtn.TextColor3 = Color3.new(1,1,1); StopBtn.Font = Enum.Font.GothamBold; StopBtn.TextSize = 15; Instance.new("UICorner", StopBtn).CornerRadius = UDim.new(0, 6)
     StopBtn.MouseButton1Click:Connect(function() Camera.CameraSubject = LocalPlayer.Character.Humanoid end)
 
-    local Scroll = Instance.new("ScrollingFrame", page); Scroll.Size = UDim2.new(1, -5, 1, -85); Scroll.BackgroundTransparency = 1; Scroll.ScrollBarThickness = 4; Scroll.ScrollBarImageColor3 = Theme.Stroke
+    local Scroll = Instance.new("ScrollingFrame", page); Scroll.Size = UDim2.new(1, -5, 1, -90); Scroll.BackgroundTransparency = 1; Scroll.ScrollBarThickness = 4; Scroll.ScrollBarImageColor3 = Theme.Stroke
     Scroll.AutomaticCanvasSize = Enum.AutomaticSize.Y
     local Layout = Instance.new("UIListLayout", Scroll); Layout.Padding = UDim.new(0, 4)
 
     local function UpdateList()
         for _, v in pairs(Scroll:GetChildren()) do if v:IsA("TextButton") then v:Destroy() end end
-        for _, p in pairs(Players:GetPlayers()) do
+        
+        local playerList = Players:GetPlayers()
+        table.sort(playerList, function(a, b) 
+            local teamA = a.Team and a.Team.Name or "Neutral"
+            local teamB = b.Team and b.Team.Name or "Neutral"
+            if teamA ~= teamB then return teamA < teamB end
+            return a.Name:lower() < b.Name:lower()
+        end)
+        
+        for _, p in pairs(playerList) do
             if p ~= LocalPlayer then
-                local PBtn = Instance.new("TextButton", Scroll); PBtn.Size = UDim2.new(1, 0, 0, 28); PBtn.BackgroundColor3 = Theme.Sec; PBtn.Text = "  " .. p.DisplayName .. " (@" .. p.Name .. ")"; PBtn.TextColor3 = Theme.TextDim; PBtn.Font = Enum.Font.Gotham; PBtn.TextSize = 11; PBtn.TextXAlignment = Enum.TextXAlignment.Left; PBtn.AutoButtonColor = false; Instance.new("UICorner", PBtn).CornerRadius = UDim.new(0, 4)
+                local teamName = p.Team and p.Team.Name or "Neutral"
+                local displayStr = " [" .. teamName .. "] " .. p.DisplayName
+                
+                -- [HD] PLAYER NAMES (Big Text)
+                local PBtn = Instance.new("TextButton", Scroll); PBtn.Size = UDim2.new(1, 0, 0, 30); PBtn.BackgroundColor3 = Theme.Sec; PBtn.Text = displayStr; PBtn.TextColor3 = Theme.TextDim; PBtn.Font = Enum.Font.GothamSemibold; PBtn.TextSize = 15; PBtn.TextXAlignment = Enum.TextXAlignment.Left; PBtn.AutoButtonColor = false; Instance.new("UICorner", PBtn).CornerRadius = UDim.new(0, 4)
+                
                 local TC = Instance.new("Frame", PBtn); TC.Size = UDim2.new(0, 3, 1, 0); TC.BackgroundColor3 = p.TeamColor.Color; Instance.new("UICorner", TC).CornerRadius = UDim.new(0, 4)
+                
                 PBtn.MouseButton1Click:Connect(function()
                     if States.MenuAction == "Spectate" then
                         if p.Character and p.Character:FindFirstChild("Humanoid") then Camera.CameraSubject = p.Character.Humanoid end
@@ -324,7 +346,8 @@ local function AddPlayerList(page)
     end
     UpdateList(); Players.PlayerAdded:Connect(UpdateList); Players.PlayerRemoving:Connect(UpdateList)
     
-    local RefBtn = Instance.new("TextButton", page); RefBtn.Size = UDim2.new(1, -5, 0, 20); RefBtn.BackgroundColor3 = Color3.fromRGB(40,40,50); RefBtn.Text = "REFRESH"; RefBtn.TextColor3 = Theme.Text; RefBtn.Font = Enum.Font.GothamBold; RefBtn.TextSize = 9; Instance.new("UICorner", RefBtn).CornerRadius = UDim.new(0, 4)
+    -- [HD] REFRESH BUTTON (Readable)
+    local RefBtn = Instance.new("TextButton", page); RefBtn.Size = UDim2.new(1, -5, 0, 25); RefBtn.BackgroundColor3 = Color3.fromRGB(40,40,50); RefBtn.Text = "REFRESH LIST"; RefBtn.TextColor3 = Theme.Text; RefBtn.Font = Enum.Font.GothamBold; RefBtn.TextSize = 12; Instance.new("UICorner", RefBtn).CornerRadius = UDim.new(0, 4)
     RefBtn.MouseButton1Click:Connect(UpdateList)
 end
 
@@ -360,7 +383,6 @@ AddToggle(P3, "Noclip [V]", "Noclip")
 AddToggle(P3, "Speed Hack", "SpeedHack")
 AddSlider(P3, "Walk Speed", 16, 300, 100, function(v) Vals.WalkSpeed = v end)
 AddToggle(P3, "Infinite Jump", "InfJump")
--- [RESTORED] Buttons
 AddDual(P3, "SAVE P1", function() SetPoint("P1") end, "WARP P1", function() TPPoint("P1") end)
 AddDual(P3, "SAVE P2", function() SetPoint("P2") end, "WARP P2", function() TPPoint("P2") end)
 AddDual(P3, "SAVE P3", function() SetPoint("P3") end, "WARP P3", function() TPPoint("P3") end)
@@ -512,4 +534,4 @@ UIS.InputBegan:Connect(function(i,g)
     end
 end)
 
-print("X ULTIMATE V3.9.6 COMPLETE LOADED")
+print("X ULTIMATE V3.9.10 HD TEXT LOADED")
